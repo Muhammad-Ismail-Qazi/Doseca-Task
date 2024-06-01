@@ -1,16 +1,12 @@
-import 'dart:ffi';
 import 'dart:io';
-
-import 'package:duseca_task/app/components/button.dart';
-import 'package:duseca_task/app/components/textfield.dart';
-import 'package:duseca_task/app/constants/fonts.dart';
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sizer/sizer.dart';
-
+import '../../../components/button.dart';
+import '../../../components/textfield.dart';
 import '../../../constants/spaces.dart';
+import '../../../constants/fonts.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -36,19 +32,20 @@ class HomeView extends GetView<HomeController> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CustomTextField(
-                textFieldController: controller.textController,
-                hint: 'Text',
-                keyboardType: TextInputType.text,
-                validator: null,
-              visibility: false,),
+              textFieldController: controller.textController,
+              hint: 'Text',
+              keyboardType: TextInputType.text,
+              validator: null,
+              visibility: false,
+            ),
             Spaces.y1,
             Obx(() => controller.imagePath.value == ''
                 ? const Text("No Image selected")
                 : SizedBox(
-                height: 10*3.h,
-                width: double.infinity,
-                child: Image(image: FileImage(File(controller.imagePath.value))))),
-
+                    height: 30.h,
+                    width: double.infinity,
+                    child: Image(
+                        image: FileImage(File(controller.imagePath.value))))),
             Spaces.y2,
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -62,24 +59,77 @@ class HomeView extends GetView<HomeController> {
                 ElevatedButton(
                     onPressed: () => controller.pickImage(ImageSource.camera),
                     child: const Text("Camera")),
+                const SizedBox(
+                  width: 12,
+                ),
+                ElevatedButton(
+                    onPressed: () => controller.pickPDFFile(),
+                    child: const Text("File Picker")),
               ],
             ),
             CustomButton(
               text: 'Save',
-              onPressed: () => {
-
-                 if(controller.imagePath.isNotEmpty && controller.textController.text.isNotEmpty){
-                  controller.uploadTextImage(),
+              onPressed: () {
+                if (controller.pickedFile.value != null) {
+                  // Case: PDF file selected
+                  if (controller.imagePath.value.isNotEmpty &&
+                      controller.textController.text.isNotEmpty) {
+                    // Case: Text with PDF file
+                    controller.uploadTextPDF();
+                  } else if (controller.imagePath.value.isNotEmpty) {
+                    // Case: Image with PDF file
+                    controller.uploadImagePDF();
+                  } else {
+                    // Case: Only PDF file
+                    controller.uploadPDF();
                   }
-          else if(controller.imagePath.isNotEmpty)
-        {
-        controller.uploadImage(),
-        }
-                else if(controller.textController.text.isNotEmpty){
-                    controller.uploadText()
+                } else if (controller.imagePath.value.isNotEmpty) {
+                  // Case: Image selected
+                  if (controller.textController.text.isNotEmpty) {
+                    // Case: Text with image
+                    controller.uploadTextImage();
+                  } else {
+                    // Case: Only image
+                    controller.uploadImage();
                   }
+                } else if (controller.textController.text.isNotEmpty) {
+                  // Case: Only text
+                  if (controller.pickedFile.value != null) {
+                    // Case: Text with PDF file
+                    controller.uploadTextPDF();
+                  } else {
+                    // Case: Only text
+                    controller.uploadText();
+                  }
+                } else {
+                  // Case: No data to upload
+                  Get.snackbar('Error', 'No data to upload');
+                }
               },
-            )
+            ),
+            Obx(() {
+              if (controller.pickedFile.value == null) {
+                return Text('No file selected');
+              } else {
+                final file = File(controller.pickedFile.value!.path!);
+                if (controller.pickedFile.value!.extension == 'pdf') {
+                  return Container(
+                    color: Colors.blue[100],
+                    child: Text(
+                        'PDF file selected: ${controller.pickedFile.value!.name}'),
+                  );
+                } else {
+                  return Container(
+                    color: Colors.blue[100],
+                    child: Image.file(
+                      file,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                  );
+                }
+              }
+            }),
           ],
         ),
       ),
