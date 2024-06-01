@@ -19,6 +19,13 @@ create a project with get cli
 connection with Firebase using Firebase CLI for Android and IOS
 enable Firstore and Authentication to the new provider with email and password
 
+**Task 1**
+upload text separately (done)
+upload image separately (done)
+upload both  (done)
+
+Letter on we we convert it from functional programing to abstract class and achieving single responsibility principle 
+
 **Dependancy added**
   get: 4.6.6
   firebase_core: 2.32.0
@@ -28,7 +35,6 @@ enable Firstore and Authentication to the new provider with email and password
   firebase_auth: 4.20.0
   image_picker: 1.1.2
   firebase_storage: 11.7.7
-**Task 1**
-upload text separately (done)
+
 
 
