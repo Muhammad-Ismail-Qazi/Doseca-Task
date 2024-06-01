@@ -1,13 +1,16 @@
 class HomeModel {
   String? text;
   String? userId;
+  String? imageUrl;
 
-  HomeModel({this.text, this.userId});
+
+  HomeModel({this.text, this.userId,this.imageUrl});
 
   Map<String, dynamic> toMap() {
     return {
-      'text': text,
+      'text': text ?? '',
       'userId': userId,
+      'imageUrl': imageUrl ?? '',
     };
   }
 
@@ -15,6 +18,7 @@ class HomeModel {
     return HomeModel(
       text: map['text'],
       userId: map['userId'],
+      imageUrl: map['imageUrl'],
     );
   }
 }

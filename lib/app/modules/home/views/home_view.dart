@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:duseca_task/app/components/button.dart';
@@ -65,7 +66,19 @@ class HomeView extends GetView<HomeController> {
             ),
             CustomButton(
               text: 'Save',
-              onPressed: () => controller.uploadData(),
+              onPressed: () => {
+
+                 if(controller.imagePath.isNotEmpty && controller.textController.text.isNotEmpty){
+                  controller.uploadTextImage(),
+                  }
+          else if(controller.imagePath.isNotEmpty)
+        {
+        controller.uploadImage(),
+        }
+                else if(controller.textController.text.isNotEmpty){
+                    controller.uploadText()
+                  }
+              },
             )
           ],
         ),
