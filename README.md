@@ -34,7 +34,7 @@ MVC Pattern follow
 
 
 
-Letter on we we convert it from functional programing to abstract class and achieving single responsibility principle 
+**Later on, we convert it from functional programming to abstract class and achieve the single responsibility principle**
 
 **Dependancy added**
   get: 4.6.6
