@@ -6,6 +6,8 @@ import 'package:duseca_task/app/modules/login/bindings/login_binding.dart';
 import 'package:duseca_task/app/modules/login/views/login_view.dart';
 import 'package:duseca_task/app/modules/signup/bindings/signup_binding.dart';
 import 'package:duseca_task/app/modules/signup/views/signup_view.dart';
+import 'package:duseca_task/app/modules/view_user_data/bindings/view_user_data_binding.dart';
+import 'package:duseca_task/app/modules/view_user_data/views/view_user_data_view.dart';
 
 part 'app_routes.dart';
 
@@ -29,6 +31,11 @@ class AppPages {
       name: _Paths.SIGNUP,
       page: () => SignupView(),
       binding: SignupBinding(),
+    ),
+    GetPage(
+      name: _Paths.VIEW_USER_DATA,
+      page: () => ViewUserDataView(),
+      binding: ViewUserDataBinding(),
     ),
   ];
 }

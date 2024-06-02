@@ -108,18 +108,6 @@ class HomeController extends GetxController {
     }
   }
 
-
-
-  void logout() {
-    firebaseAuthInstance.signOut().then((value) => Get.offAllNamed('/login'));
-  }
-
-  void clearData() {
-    textController.clear();
-    imagePath.value = '';
-    pickedFile.value = null;
-  }
-
   Future<void> pickPDFFile() async {
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -204,40 +192,6 @@ class HomeController extends GetxController {
     }
   }
 
-  Future<void> uploadImagePDF() async {
-    try {
-      final user = firebaseAuthInstance.currentUser;
-      if (user != null) {
-        if (pickedFile.value == null) {
-          Get.snackbar('Error', 'No PDF file selected');
-          return;
-        }
-
-        final file = File(pickedFile.value!.path!);
-        final fileName = pickedFile.value!.name;
-        final Reference ref = firebaseStorageInstance.ref().child(fileName);
-        final uploadTask = ref.putFile(file);
-        final TaskSnapshot snapshot = await uploadTask;
-        final pdfUrl = await snapshot.ref.getDownloadURL();
-
-        final homeModel = HomeModel(
-          userId: user.uid,
-          pdfUrl: pdfUrl,
-          imageUrl: imagePath.value,
-        );
-
-        await userDataCollection.add(homeModel.toMap());
-        Get.snackbar('Success', 'PDF,image  uploaded successfully');
-        clearData();
-      } else {
-        Get.snackbar('Error', 'No user logged in');
-      }
-    } catch (exception) {
-      Get.snackbar('Fail', 'Failed to upload PDF file: $exception');
-      print(exception);
-    }
-  }
-
   Future<void> uploadTextImagePDF() async {
     try {
       final user = firebaseAuthInstance.currentUser;
@@ -273,13 +227,18 @@ class HomeController extends GetxController {
     }
   }
 
-
-
-
   @override
   void onClose() {
     textController.dispose();
     super.onClose();
+  }
+  void logout() {
+    firebaseAuthInstance.signOut().then((value) => Get.offAllNamed('/login'));
+  }
+  void clearData() {
+    textController.clear();
+    imagePath.value = '';
+    pickedFile.value = null;
   }
 
 }

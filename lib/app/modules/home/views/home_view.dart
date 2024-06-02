@@ -72,35 +72,36 @@ class HomeView extends GetView<HomeController> {
               onPressed: () {
                 if (controller.pickedFile.value != null) {
                   // Case: PDF file selected
+                  print("inside1");
                   if (controller.imagePath.value.isNotEmpty &&
                       controller.textController.text.isNotEmpty) {
                     // Case: Text with PDF file
+                    print("inside2");
+                    controller.uploadTextImagePDF();
+
+                  }  else if(controller.textController.text.isNotEmpty){
+                    // case: Both with pdf
+                    print("inside3");
                     controller.uploadTextPDF();
-                  } else if (controller.imagePath.value.isNotEmpty) {
-                    // Case: Image with PDF file
-                    controller.uploadImagePDF();
                   } else {
                     // Case: Only PDF file
+                    print("inside4");
                     controller.uploadPDF();
                   }
-                } else if (controller.imagePath.value.isNotEmpty) {
+                }
+                else if (controller.imagePath.value.isNotEmpty) {
                   // Case: Image selected
-                  if (controller.textController.text.isNotEmpty) {
+                  if (controller.textController.text.isNotEmpty & controller.imagePath.value.isNotEmpty) {
                     // Case: Text with image
                     controller.uploadTextImage();
                   } else {
                     // Case: Only image
                     controller.uploadImage();
                   }
-                } else if (controller.textController.text.isNotEmpty) {
-                  // Case: Only text
-                  if (controller.pickedFile.value != null) {
-                    // Case: Text with PDF file
-                    controller.uploadTextPDF();
-                  } else {
-                    // Case: Only text
-                    controller.uploadText();
-                  }
+                }
+                else if (controller.textController.text.isNotEmpty) {
+                  // Case: Only text;
+                  controller.uploadText();
                 } else {
                   // Case: No data to upload
                   Get.snackbar('Error', 'No data to upload');
@@ -109,7 +110,7 @@ class HomeView extends GetView<HomeController> {
             ),
             Obx(() {
               if (controller.pickedFile.value == null) {
-                return Text('No file selected');
+                return const Text('No file selected');
               } else {
                 final file = File(controller.pickedFile.value!.path!);
                 if (controller.pickedFile.value!.extension == 'pdf') {
@@ -131,6 +132,13 @@ class HomeView extends GetView<HomeController> {
               }
             }),
           ],
+        ),
+      ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: CustomButton(
+          onPressed: () =>Get.toNamed('/view-user-data'),
+          text: 'view data',
         ),
       ),
     );
