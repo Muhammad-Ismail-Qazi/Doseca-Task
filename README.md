@@ -19,10 +19,20 @@ create a project with get cli
 connection with Firebase using Firebase CLI for Android and IOS
 enable Firstore and Authentication to the new provider with email and password
 
-**Task 1**
+**Tasks**
 upload text separately (done)
 upload image separately (done)
 upload both  (done)
+upload PDF (done)
+upload PDF with text (done)
+upload all at the same time (done)
+
+Authentication and validation (done)
+Retrieve data of current login user (done)
+MVC Pattern follow
+
+
+
 
 Letter on we we convert it from functional programing to abstract class and achieving single responsibility principle 
 
