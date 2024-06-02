@@ -1,6 +1,10 @@
+import 'dart:io'; // Add this import for File
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../constants/fonts.dart';
+import '../../../constants/spaces.dart';
 import '../../home/home_model/home_model.dart';
 import '../controllers/view_user_data_controller.dart';
 
@@ -15,8 +19,9 @@ class ViewUserDataView extends GetView<ViewUserDataController> {
         appBar: AppBar(
           title: Text('View User Data', style: CustomFontStyle.heading),
           centerTitle: true,
-          bottom: const TabBar(
-            tabs: [
+          bottom: TabBar(
+            labelStyle: CustomFontStyle.normal,
+            tabs: const [
               Tab(text: 'Text Only'),
               Tab(text: 'Image Only'),
               Tab(text: 'PDF Only'),
@@ -52,9 +57,11 @@ class ViewUserDataView extends GetView<ViewUserDataController> {
       itemBuilder: (context, index) {
         final activity = activities[index];
         return Card(
-          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
           child: ListTile(
-            title: Text('Activity by User: ${activity.userId}'),
+            tileColor: Colors.grey[200],
+            title: Text('Activity by User: ${activity.userId}',
+                style: CustomFontStyle.normal),
             subtitle: getActivityContent(activity),
           ),
         );
@@ -69,33 +76,45 @@ class ViewUserDataView extends GetView<ViewUserDataController> {
 
     if (imageUrl.isNotEmpty && pdfUrl.isEmpty && text.isEmpty) {
       // Only image
-      return Image.network(imageUrl, height: 100, width: 100, fit: BoxFit.cover);
+      if (Uri.parse(imageUrl).scheme.contains('http')) {
+        // Network image
+        return Image.network(imageUrl,
+            height: 100, width: 100, fit: BoxFit.cover);
+      } else {
+        // Local file image
+        return Image.file(File(imageUrl),
+            height: 100, width: 100, fit: BoxFit.cover);
+      }
     } else if (pdfUrl.isNotEmpty && imageUrl.isEmpty && text.isEmpty) {
       // Only PDF
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.picture_as_pdf, size: 50),
-          Text('PDF available'),
+          Icon(Icons.picture_as_pdf, size: 10 * 3.sp),
+          const Text('PDF available'),
           TextButton(
             onPressed: () {
               _openPdf(pdfUrl);
             },
-            child: Text('Open PDF'),
+            child: const Text('Open PDF'),
           ),
         ],
       );
     } else if (text.isNotEmpty && imageUrl.isEmpty && pdfUrl.isEmpty) {
       // Only text
-      return Text(text);
+      return Text(text, style: CustomFontStyle.normal);
     } else if (imageUrl.isNotEmpty && text.isNotEmpty && pdfUrl.isEmpty) {
       // Text with image
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(text),
-          SizedBox(height: 8),
-          Image.network(imageUrl, height: 100, width: 100, fit: BoxFit.cover),
+          Text(text, style: CustomFontStyle.normal),
+          Spaces.y2,
+          if (Uri.parse(imageUrl).scheme.contains('http'))
+            Image.network(imageUrl, height: 100, width: 100, fit: BoxFit.cover)
+          else
+            Image.file(File(imageUrl),
+                height: 100, width: 100, fit: BoxFit.cover),
         ],
       );
     } else if (pdfUrl.isNotEmpty && text.isNotEmpty && imageUrl.isEmpty) {
@@ -103,15 +122,15 @@ class ViewUserDataView extends GetView<ViewUserDataController> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(text),
-          SizedBox(height: 8),
-          Icon(Icons.picture_as_pdf, size: 50),
-          Text('PDF available'),
+          Text(text, style: CustomFontStyle.normal),
+          Spaces.y1,
+          Icon(Icons.picture_as_pdf, size: 30.sp),
+          Text('PDF available', style: CustomFontStyle.normal),
           TextButton(
             onPressed: () {
               _openPdf(pdfUrl);
             },
-            child: Text('Open PDF'),
+            child: const Text('Open PDF'),
           ),
         ],
       );
@@ -120,43 +139,59 @@ class ViewUserDataView extends GetView<ViewUserDataController> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.network(imageUrl, height: 100, width: 100, fit: BoxFit.cover),
-          SizedBox(height: 8),
-          Icon(Icons.picture_as_pdf, size: 50),
-          Text('PDF available'),
+          if (Uri.parse(imageUrl).scheme.contains('http'))
+            Image.network(imageUrl, height: 100, width: 100, fit: BoxFit.cover)
+          else
+            Image.file(File(imageUrl),
+                height: 100, width: 100, fit: BoxFit.cover),
+          Spaces.y1,
+          const Icon(Icons.picture_as_pdf, size: 50),
+          Text('PDF available', style: CustomFontStyle.normal),
           TextButton(
             onPressed: () {
               _openPdf(pdfUrl);
             },
-            child: Text('Open PDF'),
+            child: const Text('Open PDF'),
           ),
         ],
       );
     } else if (pdfUrl.isNotEmpty && imageUrl.isNotEmpty && text.isNotEmpty) {
       // Text with image and PDF
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(text),
-          SizedBox(height: 8),
-          Image.network(imageUrl, height: 100, width: 100, fit: BoxFit.cover),
-          SizedBox(height: 8),
-          Icon(Icons.picture_as_pdf, size: 50),
-          Text('PDF available'),
-          TextButton(
-            onPressed: () {
-              _openPdf(pdfUrl);
-            },
-            child: Text('Open PDF'),
-          ),
-        ],
+      return SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(text, style: CustomFontStyle.normal),
+            Spaces.y1,
+            if (Uri.parse(imageUrl).scheme.contains('http'))
+              Image.network(imageUrl,
+                  height: 100, width: 100, fit: BoxFit.cover)
+            else
+              Image.file(File(imageUrl),
+                  height: 100, width: 100, fit: BoxFit.cover),
+            Spaces.y1,
+            const Icon(Icons.picture_as_pdf, size: 50),
+            Text('PDF available', style: CustomFontStyle.normal),
+            TextButton(
+              onPressed: () {
+                _openPdf(pdfUrl);
+              },
+              child: const Text('Open PDF'),
+            ),
+          ],
+        ),
       );
     } else {
-      return Text('No content available');
+      return const Text('No content available');
     }
   }
 
-  void _openPdf(String pdfUrl) {
-    // Implement PDF opening logic
+  void _openPdf(String pdfUrl) async {
+    final Uri uri = Uri.parse(pdfUrl);
+    if (await canLaunch(uri.toString())) {
+      await launch(uri.toString());
+    } else {
+      Get.snackbar('Error', 'Could not open PDF');
+    }
   }
 }

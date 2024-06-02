@@ -48,20 +48,16 @@ class HomeView extends GetView<HomeController> {
                         image: FileImage(File(controller.imagePath.value))))),
             Spaces.y2,
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
                     onPressed: () => controller.pickImage(ImageSource.gallery),
                     child: const Text("Gallery")),
-                const SizedBox(
-                  width: 12,
-                ),
+                Spaces.y1,
                 ElevatedButton(
                     onPressed: () => controller.pickImage(ImageSource.camera),
                     child: const Text("Camera")),
-                const SizedBox(
-                  width: 12,
-                ),
+                Spaces.y1,
                 ElevatedButton(
                     onPressed: () => controller.pickPDFFile(),
                     child: const Text("File Picker")),
@@ -72,34 +68,31 @@ class HomeView extends GetView<HomeController> {
               onPressed: () {
                 if (controller.pickedFile.value != null) {
                   // Case: PDF file selected
-                  print("inside1");
+
                   if (controller.imagePath.value.isNotEmpty &&
                       controller.textController.text.isNotEmpty) {
                     // Case: Text with PDF file
-                    print("inside2");
-                    controller.uploadTextImagePDF();
 
-                  }  else if(controller.textController.text.isNotEmpty){
+                    controller.uploadTextImagePDF();
+                  } else if (controller.textController.text.isNotEmpty) {
                     // case: Both with pdf
-                    print("inside3");
                     controller.uploadTextPDF();
                   } else {
                     // Case: Only PDF file
-                    print("inside4");
+
                     controller.uploadPDF();
                   }
-                }
-                else if (controller.imagePath.value.isNotEmpty) {
+                } else if (controller.imagePath.value.isNotEmpty) {
                   // Case: Image selected
-                  if (controller.textController.text.isNotEmpty & controller.imagePath.value.isNotEmpty) {
+                  if (controller.textController.text.isNotEmpty &
+                      controller.imagePath.value.isNotEmpty) {
                     // Case: Text with image
                     controller.uploadTextImage();
                   } else {
                     // Case: Only image
                     controller.uploadImage();
                   }
-                }
-                else if (controller.textController.text.isNotEmpty) {
+                } else if (controller.textController.text.isNotEmpty) {
                   // Case: Only text;
                   controller.uploadText();
                 } else {
@@ -137,7 +130,7 @@ class HomeView extends GetView<HomeController> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(12.0),
         child: CustomButton(
-          onPressed: () =>Get.toNamed('/view-user-data'),
+          onPressed: () => Get.toNamed('/view-user-data'),
           text: 'view data',
         ),
       ),
